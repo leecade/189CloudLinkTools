@@ -1,0 +1,13 @@
+{
+  "name": "189CloudLinkTools",
+  "version": "0.0.1",
+  "description": "",
+  "main": "app.js",
+  "author": "Srar",
+  "license": "MIT License",
+  "dependencies": {
+    "body-parser": "^1.14.2",
+    "express": "^4.13.4",
+    "morgan": "^1.6.1"
+  }
+}

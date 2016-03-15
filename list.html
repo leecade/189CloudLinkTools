@@ -1,0 +1,112 @@
+<html>
+    <head>
+        <meta charset="urf-8">
+        <title>189天翼云 直连工具</title>
+    </head>
+    
+    <body>
+        <div id="app"></div>
+        <script src="//cdn.bootcss.com/zepto/1.1.6/zepto.min.js"></script>
+        <script src="//cdn.bootcss.com/react/0.14.4/react.min.js"></script>
+        <script src="//cdn.bootcss.com/react/0.14.0-beta3/JSXTransformer.js"></script>
+        <script type="text/jsx">
+            var CloudLink = React.createClass({                
+                getInitialState: function() {
+                    return {
+                        folderId: 0,
+                        folderArray: [],
+                        filesList  : [],
+                        isLoading  : false
+                    };
+                },
+                
+                componentWillMount: function() {
+                    this.load();
+                },
+                
+                load: function() {
+                    var temp = [];
+                    this.setState({isLoading: true});
+                    $.getJSON(this.state.folderId == 0 ? '/files' : '/files/' + this.state.folderId, function(data){
+                        this.setState({isLoading: false});
+                        if(this.state.folderId != 0){
+                            temp.push({
+                                name: '..',
+                                id  : this.state.lastFolder,
+                                folder: true,
+                            });
+                        }
+                        if(data.fileList.folder != undefined)
+                            data.fileList.folder.map(function(foldersItem){
+                                foldersItem.folder = true;
+                                temp.push(foldersItem);
+                            });
+                        if(data.fileList.file != undefined)
+                            data.fileList.file.map(function(filesItem){
+                                filesItem.folder = false;
+                                temp.push(filesItem);
+                            });
+                        this.setState({ filesList: temp });
+                    }.bind(this));
+                },
+                
+                toFolder(folderId, folderName){
+                    if(folderName == '..'){
+                        var top = this.state.folderArray.pop();
+                        this.state.folderId = this.state.folderArray.length + 1 == 1 ? 0 : top;
+                        console.log(this.state.folderArray.length + 1 == 1 ? 0 : top);
+                    }else{
+                        this.state.folderArray.push(this.state.folderId);
+                        this.state.folderId = folderId;
+                    }
+                    this.setState({filesList: []});
+                    this.load();
+                },
+                
+                render: function() {
+                    return (
+                        <div>
+                            <h2 style={this.state.isLoading ? {display: 'block'} : {display: 'none'} }> 正在加载 </h2>          
+                            <table cellpadding="0" cellspacing="0">
+                                <thead>
+                                    <tr>
+                                        <th width="20%"><span style={{float:'left'}}>文件名称</span></th>
+                                        <th width="20%"><span style={{float:'left'}}>文件MD5</span></th>
+                                        <th width="20%"><span style={{float:'left'}}>直连地址(302)</span></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {this.state.filesList.map(function(item){
+                                        return <TableItem toFolder={this.toFolder} item={item} />
+                                    }.bind(this))}
+                                </tbody>
+                            </table>
+                        
+                        </div>
+                    );
+                }
+            });
+            
+            var TableItem = React.createClass({
+                render: function() {
+                    return (
+                        <tr>
+                            {
+                                this.props.item.folder ?
+                                    <td><a href="javasctipt:;" onClick={this.props.toFolder.bind(this, this.props.item.id, this.props.item.name)}>{this.props.item.name + '/'}</a></td>
+                                :
+                                    <td>{this.props.item.name}</td>
+                            }
+                            <td>{this.props.item.md5}</td>
+                            <td>
+                                {this.props.item.folder ? '' : window.location.protocol + '//' + document.domain + '/link/' + this.props.item.id}
+                            </td>
+                        </tr>
+                    )
+                }
+            });
+            
+            React.render(<CloudLink />, document.getElementById('app'));
+        </script>
+    </body>
+</html>
