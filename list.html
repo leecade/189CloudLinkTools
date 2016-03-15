@@ -99,7 +99,7 @@
                             }
                             <td>{this.props.item.md5}</td>
                             <td>
-                                {this.props.item.folder ? '' : window.location.protocol + '//' + document.domain + '/link/' + this.props.item.id}
+                                {this.props.item.folder ? '' : window.location.protocol + '//' + document.domain + (location.port ? ':' + location.port : '') + '/link/' + this.props.item.id}
                             </td>
                         </tr>
                     )
