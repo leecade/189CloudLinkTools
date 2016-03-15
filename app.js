@@ -60,7 +60,7 @@ app.get('/', (req, res) => {
     });
 });
 
-app.get('/link/fileId', (req, res) => {
+app.get('/link/:fileId', (req, res) => {
     var fileId = req.params.fileId;
     req.getApiData('http://api.189.cn/ChinaTelecom/getFileDownloadUrl.action', {fileId: fileId}, (err, result) => {
         if(err) return res.status(503).send(err);
