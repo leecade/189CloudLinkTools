@@ -83,7 +83,7 @@ app.get('/files/:folderId', (req, res) => {
     })
 });
 
-app.listen(3000, (error) =>  {
+app.listen(require('./config.json').port, (error) =>  {
     if(error) return console.error('监听端口发生错误:', error);
     console.log('服务已开启');
 });

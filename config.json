@@ -1,4 +1,5 @@
 {
+    "port"  : 3000,
     "appKey": "123",
     "appSecret": "123",
     "callbackUrl": "http://123.123/authCallback",
